@@ -22,13 +22,13 @@ func main() {
 	updates := bot.GetUpdatesChan(u)
 
 	for update := range updates {
-		if update.Message != nil { // If we got a message
-			log.Printf("[%s] %s", update.Message.From.UserName, update.Message.Text)
+		if update.Message != nil {
+			if update.Message.Location != nil {
+				latitude := update.Message.Location.Latitude
+				longitude := update.Message.Location.Longitude
 
-			msg := tgbotapi.NewMessage(update.Message.Chat.ID, update.Message.Text)
-			msg.ReplyToMessageID = update.Message.MessageID
-
-			bot.Send(msg)
+			}
 		}
+
 	}
 }
