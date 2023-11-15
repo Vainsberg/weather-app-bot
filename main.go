@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 
@@ -37,8 +38,6 @@ func main() {
 			if update.Message.Location != nil {
 				latitude := update.Message.Location.Latitude
 				longitude := update.Message.Location.Longitude
-				msg := tgbotapi.NewMessage(update.Message.Chat.ID, fmt.Sprintf("Попучены координаты: %f,%f", latitude, longitude))
-				bot.Send(msg)
 				latitudetext := fmt.Sprintf("%f", latitude)
 				longitudetext := fmt.Sprintf("%f", longitude)
 				backendURL := "https://localhost:8080/get_weather?latitude=" + latitudetext + "&longitude=" + longitudetext
@@ -47,6 +46,12 @@ func main() {
 					log.Fatal(err)
 				}
 				defer resp.Body.Close()
+				body, err := ioutil.ReadAll(resp.Body)
+				if err != nil {
+					log.Fatal(err)
+				}
+				msg := tgbotapi.NewMessage(update.Message.Chat.ID, string(body))
+				bot.Send(msg)
 			}
 
 		}
