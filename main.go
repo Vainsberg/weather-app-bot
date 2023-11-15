@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"net/http"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
@@ -36,9 +37,18 @@ func main() {
 			if update.Message.Location != nil {
 				latitude := update.Message.Location.Latitude
 				longitude := update.Message.Location.Longitude
-				msg := tgbotapi.NewMessage(update.Message.Chat.ID, fmt.Sprintf("Получены координаты: Широта %f, Долгота %f", latitude, longitude))
+				msg := tgbotapi.NewMessage(update.Message.Chat.ID, fmt.Sprintf("Попучены координаты: %f,%f", latitude, longitude))
 				bot.Send(msg)
+				latitudetext := fmt.Sprintf("%f", latitude)
+				longitudetext := fmt.Sprintf("%f", longitude)
+				backendURL := "https://localhost:8080/get_weather?latitude=" + latitudetext + "&longitude=" + longitudetext
+				resp, err := http.Get(backendURL)
+				if err != nil {
+					log.Fatal(err)
+				}
+				defer resp.Body.Close()
 			}
+
 		}
 
 	}
