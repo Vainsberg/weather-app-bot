@@ -1,13 +1,23 @@
 package main
 
 import (
+	"flag"
+	"fmt"
 	"log"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
 func main() {
-	bot, err := tgbotapi.NewBotAPI("MyAwesomeBotToken")
+	var apiToken string
+	flag.StringVar(&apiToken, "api-token", "", "API токен")
+	flag.Parse()
+	if apiToken == "" {
+		fmt.Println("Необходимо указать API токен")
+		return
+	}
+	fmt.Printf("API токен: %s\n", apiToken)
+	bot, err := tgbotapi.NewBotAPI(apiToken)
 	if err != nil {
 		log.Panic(err)
 	}
