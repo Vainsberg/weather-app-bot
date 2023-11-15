@@ -36,7 +36,8 @@ func main() {
 			if update.Message.Location != nil {
 				latitude := update.Message.Location.Latitude
 				longitude := update.Message.Location.Longitude
-
+				msg := tgbotapi.NewMessage(update.Message.Chat.ID, fmt.Sprintf("Получены координаты: Широта %f, Долгота %f", latitude, longitude))
+				bot.Send(msg)
 			}
 		}
 
