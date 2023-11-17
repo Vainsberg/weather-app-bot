@@ -1,25 +1,24 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	request "weatherbottelegram/request"
+	"weatherbottelegram/viper"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"github.com/spf13/viper"
 )
 
 func main() {
-	viper.SetConfigFile("config.yaml")
+	// viper.SetConfigFile("config.yaml")
 
-	err := viper.ReadInConfig()
-	if err != nil {
-		fmt.Println("Ошибка чтения конфигурации:", err)
-		return
-	}
+	// err := viper.ReadInConfig()
+	// if err != nil {
+	// 	fmt.Println("Ошибка чтения конфигурации:", err)
+	// 	return
+	// }
 
-	value := viper.GetString("API-KEY")
-	bot, err := tgbotapi.NewBotAPI(value)
+	//value := viper.GetString("API-KEY")
+	bot, err := tgbotapi.NewBotAPI(viper.ValApiKey())
 	if err != nil {
 		log.Panic(err)
 	}
