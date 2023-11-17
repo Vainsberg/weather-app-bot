@@ -1,60 +1,39 @@
 package main
 
 import (
-	"flag"
 	"fmt"
-	"io/ioutil"
 	"log"
-	"net/http"
+	request "weatherbottelegram/request"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"github.com/spf13/viper"
 )
 
 func main() {
-	var apiToken string
-	flag.StringVar(&apiToken, "api-token", "", "API токен")
-	flag.Parse()
-	if apiToken == "" {
-		fmt.Println("Необходимо указать API токен")
+	viper.SetConfigFile("config.yaml")
+
+	err := viper.ReadInConfig()
+	if err != nil {
+		fmt.Println("Ошибка чтения конфигурации:", err)
 		return
 	}
-	fmt.Printf("API токен: %s\n", apiToken)
-	bot, err := tgbotapi.NewBotAPI(apiToken)
+
+	value := viper.GetString("API-KEY")
+	bot, err := tgbotapi.NewBotAPI(value)
 	if err != nil {
 		log.Panic(err)
 	}
-
 	bot.Debug = true
 
 	log.Printf("Authorized on account %s", bot.Self.UserName)
 
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 60
-
 	updates := bot.GetUpdatesChan(u)
-
 	for update := range updates {
 		if update.Message != nil {
-			if update.Message.Location != nil {
-				latitude := update.Message.Location.Latitude
-				longitude := update.Message.Location.Longitude
-				latitudetext := fmt.Sprintf("%f", latitude)
-				longitudetext := fmt.Sprintf("%f", longitude)
-				backendURL := "https://localhost:8080/get_weather?latitude=" + latitudetext + "&longitude=" + longitudetext
-				resp, err := http.Get(backendURL)
-				if err != nil {
-					log.Fatal(err)
-				}
-				defer resp.Body.Close()
-				body, err := ioutil.ReadAll(resp.Body)
-				if err != nil {
-					log.Fatal(err)
-				}
-				msg := tgbotapi.NewMessage(update.Message.Chat.ID, string(body))
-				bot.Send(msg)
-			}
+			request.HandleRequest(bot, update.Message)
 
 		}
-
 	}
 }
