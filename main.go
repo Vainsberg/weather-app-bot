@@ -9,15 +9,7 @@ import (
 )
 
 func main() {
-	// viper.SetConfigFile("config.yaml")
 
-	// err := viper.ReadInConfig()
-	// if err != nil {
-	// 	fmt.Println("Ошибка чтения конфигурации:", err)
-	// 	return
-	// }
-
-	//value := viper.GetString("API-KEY")
 	bot, err := tgbotapi.NewBotAPI(viper.ValApiKey())
 	if err != nil {
 		log.Panic(err)
