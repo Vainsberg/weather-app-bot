@@ -24,9 +24,9 @@ func WeatherApi() string {
 	err := viper.ReadInConfig()
 	if err != nil {
 		fmt.Println(err)
+
 		return "Ошибка чтения конфигурации:"
 	}
 	value := viper.GetString("WEATHER_API_URL")
 	return value
-
 }
