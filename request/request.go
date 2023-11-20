@@ -2,6 +2,7 @@ package request
 
 import (
 	"fmt"
+	"log"
 	"strings"
 	weatherinfo "weatherbottelegram/weatherInfo"
 
@@ -18,7 +19,10 @@ func HandleRequest(bot *tgbotapi.BotAPI, message *tgbotapi.Message) {
 		if len(words) != 2 {
 			errorMsg := "Неправильная форма заполнения. Пожалуйста, введите координаты в формате 'широта,долгота'."
 			reply := tgbotapi.NewMessage(message.Chat.ID, errorMsg)
-			bot.Send(reply)
+			_, err := bot.Send(reply)
+			if err != nil {
+				log.Println("Ошибка при отправке сообщения боту:", err)
+			}
 			return
 		}
 		latitudetext = words[0]
@@ -31,5 +35,8 @@ func HandleRequest(bot *tgbotapi.BotAPI, message *tgbotapi.Message) {
 		longitudetext = fmt.Sprintf("%f", longitude)
 	}
 	msg := tgbotapi.NewMessage(message.Chat.ID, weatherinfo.GetWeatherInfo(latitudetext, longitudetext))
-	bot.Send(msg)
+	_, err := bot.Send(msg)
+	if err != nil {
+		log.Println("Ошибка при отправке сообщения боту:", err)
+	}
 }
