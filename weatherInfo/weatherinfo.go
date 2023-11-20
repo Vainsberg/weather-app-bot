@@ -8,7 +8,7 @@ import (
 )
 
 func GetWeatherInfo(latitude string, longitude string) string {
-	backendURL := viper.WeatherApi() + "get_weather?latitude=" + latitude + "&longitude=" + longitude
+	backendURL := viper.WeatherApi() + "/get_weather?latitude=" + latitude + "&longitude=" + longitude
 
 	resp, err := http.Get(backendURL)
 	if err != nil {
